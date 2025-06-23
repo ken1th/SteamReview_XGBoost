@@ -2,6 +2,8 @@
 
 This project demonstrates advanced machine learning capabilities in gaming analytics by building an XGBoost classifier to predict Battlefield 2042 player recommendations. It extends from the [Battlefield 2042 Steam Reviews Analysis](./Battlefield%202042%20Steam%20Reviews%20Analysis%20README.md) project with sophisticated ML modeling, SHAP interpretability, and bias-aware analysis.
 
+**Main Code: [battlefield2042_xgboost_model.ipynb](battlefield2042_xgboost_model.ipynb)**
+
 ## 🏆 **Key Results**
 
 | **Metric** | **Value** | **Business Impact** |
