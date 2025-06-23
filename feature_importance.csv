@@ -1,0 +1,16 @@
+,SHAP_Importance
+days_since_launch,0.8937295
+days_since_last_played,0.39288968
+language_cleaned,0.2682303
+playtime_hours,0.21354155
+num_games_owned,0.16498296
+price_usd,0.09785442
+time_since_update,0.09585895
+num_reviews,0.08853241
+review_hour,0.044096272
+steam_purchase,0.030023118
+review_updated,0.015611709
+review_weekday,0.014106936
+received_for_free,0.010824972
+log_price,0.0104222745
+is_sale,0.0007092938
