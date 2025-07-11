@@ -2,5 +2,5 @@ archive/
 data/
 .venv/
 .DS_Store
-xbg_bf2042.json
+xgb_bf2042.json
 optuna_study_bf2042.pkl
