@@ -2,20 +2,22 @@
 
 This project demonstrates advanced machine learning capabilities in gaming analytics by building an XGBoost classifier to predict Battlefield 2042 player recommendations. It extends from the [Battlefield 2042 Steam Reviews Analysis](./Battlefield%202042%20Steam%20Reviews%20Analysis%20README.md) project with sophisticated ML modeling, SHAP interpretability, and bias-aware analysis.
 
-**Main Code: [battlefield2042_xgboost_model.ipynb](battlefield2042_xgboost_model.ipynb)**
-
+## **Main Code: [battlefield2042_xgboost_model.ipynb](battlefield2042_xgboost_model.ipynb)**
+---
 ## 🏆 **Key Results**
 
-| **Metric** | **Value** | **Business Impact** |
-|------------|-----------|-------------------|
-| **Cross-Validation AUC** | 0.73 | Strong model performance on historical data |
+| Metric | Value | Business Impact |
+|--------|-------|-----------------|
 | **Test Set AUC** | 0.77 | Robust generalization to unseen temporal data |
-| **Gaming Transformation** | 28.2% → 59.8% positive | Quantifies BF2042's dramatic post-launch recovery |
-| **Top SHAP Feature** | Days Since Launch (89% importance) | Validates post-launch strategy effectiveness |
+| **Temporal Distribution Shift** | 28.2% → 59.8% positive | Quantifies BF2042's post-launch improvement |
+| **Top SHAP Feature** | Days Since Launch | Post-launch strategy effectiveness confirmed |
+| **Regional Variance** | Significant | Localization opportunities identified |
+
+![Gaming Lifecycle Transformation](gaming_lifecycle_transformation.png)
 
 ## 🔍 **Key Discovery: SHAP Reveals What Actually Drives Player Satisfaction**
 
-**Major Insight**: SHAP analysis reveals that **89% of model decisions** are driven by `days_since_launch`, proving that post-launch strategy is the dominant factor in player satisfaction. The model distinguishes actionable business features (temporal patterns, regional differences) from engagement metrics that represent selection bias.
+**Major Insight**: SHAP analysis reveals that **36.1% of model decisions** are driven by `days_since_launch`, proving that post-launch strategy is the dominant factor in player satisfaction. The model distinguishes actionable business features (temporal patterns, regional differences) from engagement metrics that represent selection bias.
 
 **Business Impact**: This validates that sustained post-launch development investment directly translates to player satisfaction improvements.
 
@@ -27,6 +29,7 @@ This project demonstrates advanced machine learning capabilities in gaming analy
 
 ### **Technical Skills Demonstrated**
 - **XGBoost**: Production-ready gradient boosting with categorical feature support
+- **Optuna**: Advanced hyperparameter optimization with TPE sampling and pruning
 - **SHAP**: Model interpretability and explainable AI
 
 ### **Business Applications**
@@ -41,7 +44,7 @@ This project demonstrates advanced machine learning capabilities in gaming analy
 
 ### **Prerequisites**
 ```bash
-pip install pandas numpy scikit-learn xgboost shap matplotlib seaborn
+pip install pandas numpy scikit-learn xgboost optuna shap matplotlib seaborn
 ```
 
 ### **Data Requirements**
@@ -58,20 +61,20 @@ jupyter notebook battlefield2042_xgboost_model.ipynb
 ## 📁 **Project Structure**
 
 ```
-SteamReviewPrediction/
+SteamReview_XGBoost/
 ├── battlefield2042_xgboost_model.ipynb    # Main analysis notebook
 ├── data/
 │   ├── battlefield2042_reviews_no_text.csv
 │   └── battlefield2042_pricehistory.csv
-├── xgb_bf2042.json                        # Trained XGBoost model
 ├── feature_importance.csv                 # SHAP feature rankings
-├── train_test_info.csv                    # Dataset split information
 ├── confusion_matrix.png                   # Model performance visualization
 ├── model_performance_curves.png           # ROC and PR curves
 ├── shap_summary.png                       # SHAP feature impact analysis
 ├── shap_importance.png                    # Feature importance ranking
+├── shap_waterfall.png                     # SHAP waterfall plot
 ├── gaming_lifecycle_transformation.png    # Temporal satisfaction analysis
-
+├── LICENSE                                # MIT License
+└── README.md                              # Project documentation
 ```
 
 ---
@@ -91,45 +94,40 @@ Features categorized by business utility and bias risk:
 - **Chronological Split**: 80% train (historical) / 20% test (recent)
 - **Time Series Cross-Validation**: Prevents data leakage
 
+### **3. Hyperparameter Optimization with Optuna**
+
+- **Bayesian Optimization**: TPE (Tree-structured Parzen Estimator) sampling for efficient search
+- **Automated Pruning**: Early stopping of unpromising trials to reduce computation time
+- **Multi-objective Search**: Optimizes for AUC while maintaining model interpretability
+- **Reproducible Results**: Saved study object (`optuna_study_bf2042.pkl`) for analysis and continuation
+
+![Optuna Parallel Coordinates](optuna_parallel.png)
 
 ---
 
 ## 🔍 **Model Interpretability with SHAP**
 
-### **Top Features by Business Impact**
+Based on SHAP feature importance analysis, several critical patterns emerge with clear business actionability. The percentages below reflect each feature’s **share of total model impact** (mean absolute SHAP value normalized to sum to 100%).
 
-| **Rank** | **Feature** | **SHAP Importance** | **Business Actionability** |
-|----------|-------------|--------------------|-----------------------------|
-| 1 | `days_since_launch` | 89% | **High** - Post-launch strategy validation |
-| 2 | `language_cleaned` | 27% | **High** - Localization focus opportunities |
-| 3 | `playtime_hours` | 26% | **Low** - Selection bias (engagement ≠ causation) |
-| 4 | `price_usd` | 15% | **Medium** - Pricing optimization (with caveats) |
-| 5 | `num_games_owned` | 12% | **Medium** - Player segmentation insights |
 
-### **Feature Importance Distribution**
-- **🎯 Actionable Business Features**: Temporal patterns, regional differences, pricing factors
-- **⚠️ Selection-Biased Metrics**: Engagement metrics (playtime, recency) - predictive but not causal
-- **📊 Remaining Features**: Demographics, platform constraints, review behaviors
+#### **📅 POST-LAUNCH STRATEGY** (**36.1%** of Feature Importance)
+**`days_since_launch`** dominates with overwhelming importance, confirming that time since launch strongly affects satisfaction. This validates the critical importance of sustained post-launch content and improvements.
 
----
+#### 🕹️ RECENT ENGAGEMENT (**19.1%**)
+**`days_since_last_played`** shows that recent play activity strongly correlates with positive reviews—highly predictive but partially reflects self-selection (satisfied players play more).
 
-## 📈 **Business Insights**
+#### **🌍 LOCALIZATION PRIORITY** (**12.0%**)
+**`language_cleaned`** shows significant regional differences, suggesting prioritization of region-specific content and cultural adaptation as a key growth strategy.
 
-### **1. 📅 Post-Launch Strategy ROI Validation**
-With 89% feature importance, `days_since_launch` proves that sustained post-launch development directly drives player satisfaction - validating continued investment in game improvement.
+#### 🎮 PLAYER PROFILE DEPTH (**7.1%**)
+**`num_games_owned`** suggests that “core gamers” respond differently; targeting these player segments could help tailor offerings.
 
-### **2. 🌍 Regional Market Opportunities**  
-Language-based satisfaction variance (27% importance) reveals specific localization opportunities, enabling data-driven regional content prioritization.
-
-### **3. ⚠️ Engagement vs. Causation**
-The model distinguishes predictive engagement metrics from actionable business levers, preventing misguided strategies like "force more playtime" instead of "improve game quality."
-
-### **4. 🎯 Gaming Lifecycle Transformation**
-BF2042's dramatic turnaround (28.2% → 59.8% positive reviews, +31.6pp, p<0.001) demonstrates that games can recover from poor launches through sustained improvement.
+#### 💰 PRICING CONTEXT (**4.3%**)
+**`price_when_reviewed`** shows some correlation with positive reviews, but the temporal mismatch means this is more about "price when satisfied/dissatisfied enough to review" rather than actual purchase price. Use with caution.
 
 ---
 
-## ⚠️ **Model Limitations**
+### ⚠️ **Model Limitations**
 
 - **Selection Bias**: Engagement metrics predict satisfaction but don't represent causation - satisfied players play more, not vice versa
 - **Temporal Mismatch**: Price-at-review vs. price-at-purchase creates false pricing correlations
@@ -166,22 +164,19 @@ BF2042's dramatic turnaround (28.2% → 59.8% positive reviews, +31.6pp, p<0.001
 
 ## 📋 **Requirements**
 
-### **Python Dependencies**
+### **Python Requirements**
+Python 3.8 or higher is required to run this project.
 ```txt
 pandas>=1.3.0
 numpy>=1.21.0
 scikit-learn>=1.0.0
-xgboost>=1.5.0
+xgboost>=3.0.2
+optuna>=3.0.0
 shap>=0.40.0
 matplotlib>=3.5.0
 seaborn>=0.11.0
 scipy>=1.7.0
 ```
-
-### **System Requirements**
-- Python 3.8+
-- 8GB+ RAM (for SHAP analysis)
-- Jupyter Notebook environment
 
 **Extended From**: [Battlefield 2042 Steam Reviews Analysis](./Battlefield%202042%20Steam%20Reviews%20Analysis%20README.md)
 
@@ -189,7 +184,7 @@ scipy>=1.7.0
 
 ## ✅ **Bottom Line**
 
-**Business-Ready Gaming Analytics**: This XGBoost model delivers 0.77 AUC performance while revealing that **89% of player satisfaction is driven by post-launch strategy timing**. SHAP analysis identifies actionable business decisions and distinguishes them from selection-biased engagement metrics.
+**Business-Ready Gaming Analytics**: This XGBoost model delivers 0.77 AUC performance while revealing that **36.1% of player satisfaction is driven by post-launch strategy timing**. SHAP analysis identifies actionable business decisions and distinguishes them from selection-biased engagement metrics.
 
 **Key Validation**: BF2042's +31.6 percentage point satisfaction recovery demonstrates that sustained post-launch investment directly translates to measurable player satisfaction improvements, providing a replicable framework for gaming portfolio management.
 
